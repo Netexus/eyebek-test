@@ -1,19 +1,30 @@
-import axios from "axios";
+import apiClient from './apiClient';
+import { UserCreateRequest, User, UserListResponse } from '@/types/user.types';
+import { authService } from './authService';
 
-export const createCompany = async (
-  name: string,
-  email: string,
-  phone: string,
-  address: string,
-  password: string,
-) => {
-  const response = await axios.post("/api/backend/companies/register", {
-    name,
-    email,
-    phone,
-    address,
-    password,
-  });
+class UserService {
+  /**
+   * Create a new user for the authenticated company
+   */
+  async create(data: UserCreateRequest): Promise<User> {
+    const headers = authService.getAuthHeaders();
+    const response = await apiClient.post<any>('/users', data, { headers });
 
-  return response.data;
-};
+    // Backend returns placeholder, extract user from response
+    return response.user || data as any;
+  }
+
+  /**
+   * Get all users for the authenticated company
+   */
+  async getAll(): Promise<User[]> {
+    const headers = authService.getAuthHeaders();
+    const response = await apiClient.get<UserListResponse>('/users', { headers });
+
+    // Backend returns { message, companyId, users }
+    return response.users || [];
+  }
+}
+
+export const userService = new UserService();
+export default userService;

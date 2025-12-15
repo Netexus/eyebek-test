@@ -25,16 +25,21 @@ public class UsersController : ControllerBase
         if (companyId == null)
             return Unauthorized("No se encontró la empresa en el token.");
 
-       
-        await Task.CompletedTask;
-
-        return Ok(new
+        try
         {
-            message = "Usuario creado (implementación de servicio pendiente).",
-            companyId = companyId,
-            user = request
-        });
+            var user = await _userService.CreateAsync(companyId, request);
+            return Ok(new
+            {
+                message = "Usuario creado exitosamente.",
+                user = user
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
+    
     
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -43,16 +48,14 @@ public class UsersController : ControllerBase
         if (companyId == null)
             return Unauthorized("No se encontró la empresa en el token.");
 
-        
-        await Task.CompletedTask;
-
-        var emptyList = new List<object>();
-
-        return Ok(new
+        try
         {
-            message = "Listado de usuarios (implementación de servicio pendiente).",
-            companyId = companyId,
-            users = emptyList
-        });
+            var users = await _userService.GetByCompanyAsync(companyId);
+            return Ok(users);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 }

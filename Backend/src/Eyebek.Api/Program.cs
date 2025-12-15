@@ -7,6 +7,7 @@ using Eyebek.Infrastructure.Configuration;
 using Eyebek.Infrastructure.Persistence;
 using Eyebek.Infrastructure.Repositories;
 using Eyebek.Infrastructure.Seed;
+using Eyebek.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -78,6 +79,18 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 builder.Services.AddScoped<ISessionRepository, SessionRepository>();
+
+// HttpClient for FacialAPI
+builder.Services.AddHttpClient<IFacialRecognitionService, FacialRecognitionService>((sp, client) =>
+{
+    var facialApiUrl = builder.Configuration["FacialAPI:BaseUrl"] ?? "http://facialapi:8000";
+    client.BaseAddress = new Uri(facialApiUrl);
+    client.Timeout = TimeSpan.FromSeconds(30);
+})
+.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+});
 
 // Application Services
 builder.Services.AddScoped<ICompanyService, CompanyService>();

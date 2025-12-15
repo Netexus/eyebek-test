@@ -2,16 +2,24 @@ using Eyebek.Application.DTOs.Attendance;
 using Eyebek.Application.Interfaces;
 using Eyebek.Application.Services.Interfaces;
 using Eyebek.Domain.Entities;
+using Eyebek.Domain.Enums;
 
 namespace Eyebek.Application.Services;
 
 public class AttendanceService : IAttendanceService
 {
     private readonly IAttendanceRepository _attendanceRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly IFacialRecognitionService _facialRecognitionService;
 
-    public AttendanceService(IAttendanceRepository attendanceRepository)
+    public AttendanceService(
+        IAttendanceRepository attendanceRepository,
+        IUserRepository userRepository,
+        IFacialRecognitionService facialRecognitionService)
     {
         _attendanceRepository = attendanceRepository;
+        _userRepository = userRepository;
+        _facialRecognitionService = facialRecognitionService;
     }
     
     public async Task RegisterAsync(string companyId, AttendanceCreateRequest request)
@@ -28,6 +36,36 @@ public class AttendanceService : IAttendanceService
             Status = request.Status,
             CreatedAt = DateTime.UtcNow
         };
+
+        // If facial method, validate with FacialAPI
+        if (request.Method == AttendanceMethod.Facial && !string.IsNullOrEmpty(request.CapturePhoto))
+        {
+            var user = await _userRepository.GetByIdAsync(request.UserId, companyId);
+            if (user != null && !string.IsNullOrEmpty(user.Photo))
+            {
+                var (match, confidence) = await _facialRecognitionService.CompareFacesAsync(
+                    user.Photo, 
+                    request.CapturePhoto
+                );
+
+                attendance.Confidence = confidence;
+                
+                // Auto-approve if confidence is high enough (>= 85%)
+                if (match && confidence >= 0.85)
+                {
+                    attendance.Status = AttendanceStatus.Approved;
+                }
+                else
+                {
+                    attendance.Status = AttendanceStatus.Rejected;
+                }
+            }
+            else
+            {
+                // No stored photo to compare - reject
+                attendance.Status = AttendanceStatus.Rejected;
+            }
+        }
 
         await _attendanceRepository.AddAsync(attendance, companyId);
     }

@@ -3,7 +3,7 @@ import { Building2, Mail, Phone, MapPin, Lock } from 'lucide-react';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import GenericButton from '../../components/GenericButton/GenericButton';
-import { createCompany } from '@/services/user';
+import { authService } from '@/services';
 import { Alert } from '@/components/alertcomponent/alert';
 
 type AlertType = 'success' | 'error';
@@ -28,9 +28,10 @@ export default function RegisterPage() {
   });
 
   const [errors, setErrors] = useState<Errors>({});
-  const [alert, setAlert] = useState<{ 
-    type: AlertType; 
-    message: string; } | null>(null);
+  const [alert, setAlert] = useState<{
+    type: AlertType;
+    message: string;
+  } | null>(null);
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -100,13 +101,13 @@ export default function RegisterPage() {
     }
 
     try {
-      const res = await createCompany(
-        form.name,
-        form.email,
-        form.phone,
-        form.address,
-        form.password
-      );
+      const res = await authService.register({
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        address: form.address,
+        password: form.password
+      });
 
       console.log("Registrado:", res);
 
@@ -179,9 +180,8 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   type="text"
                   placeholder="Mi empresa S.A."
-                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-lg focus:outline-none focus:border-black transition-all text-sm lg:text-base text-black ${
-                    errors.name ? 'border-red-500' : 'border-gray-200'
-                  }`}
+                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-lg focus:outline-none focus:border-black transition-all text-sm lg:text-base text-black ${errors.name ? 'border-red-500' : 'border-gray-200'
+                    }`}
                 />
                 {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
               </div>
@@ -197,9 +197,8 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   type="text"
                   placeholder="+57 300 123 4567"
-                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-lg focus:outline-none focus:border-black transition-all text-sm lg:text-base text-black ${
-                    errors.phone ? 'border-red-500' : 'border-gray-200'
-                  }`}
+                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-lg focus:outline-none focus:border-black transition-all text-sm lg:text-base text-black ${errors.phone ? 'border-red-500' : 'border-gray-200'
+                    }`}
                 />
                 {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
               </div>
@@ -215,9 +214,8 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   type="email"
                   placeholder="contacto@empresa.com"
-                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-lg focus:outline-none focus:border-black transition-all text-sm lg:text-base text-black ${
-                    errors.email ? 'border-red-500' : 'border-gray-200'
-                  }`}
+                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-lg focus:outline-none focus:border-black transition-all text-sm lg:text-base text-black ${errors.email ? 'border-red-500' : 'border-gray-200'
+                    }`}
                 />
                 {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
               </div>
@@ -233,9 +231,8 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   type="text"
                   placeholder="calle 93 # 34sur-45"
-                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-lg focus:outline-none focus:border-black transition-all text-sm lg:text-base text-black ${
-                    errors.address ? 'border-red-500' : 'border-gray-200'
-                  }`}
+                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-lg focus:outline-none focus:border-black transition-all text-sm lg:text-base text-black ${errors.address ? 'border-red-500' : 'border-gray-200'
+                    }`}
                 />
                 {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
               </div>
@@ -251,9 +248,8 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   type="password"
                   placeholder="**********"
-                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-lg focus:outline-none focus:border-black transition-all text-sm lg:text-base text-black ${
-                    errors.password ? 'border-red-500' : 'border-gray-200'
-                  }`}
+                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-lg focus:outline-none focus:border-black transition-all text-sm lg:text-base text-black ${errors.password ? 'border-red-500' : 'border-gray-200'
+                    }`}
                 />
                 {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
               </div>
