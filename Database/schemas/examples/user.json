@@ -1,0 +1,6 @@
+{
+    "_id": "user_123",
+    "fullName": "John Doe",
+    "role": "employee",
+    "active": true
+}

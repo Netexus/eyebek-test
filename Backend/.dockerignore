@@ -1,0 +1,21 @@
+# .NET Build outputs
+bin/
+obj/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# Git
+.git/
+.gitignore
+
+# Environment
+*.Development.json
+
+# Misc
+*.log
+.DS_Store

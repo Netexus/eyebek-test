@@ -1,0 +1,9 @@
+{
+    "userId": "user_123",
+    "vector": [
+        0.012,
+        -0.433,
+        0.981
+    ],
+    "model": "facenet"
+}

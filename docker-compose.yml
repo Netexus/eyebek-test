@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: eyebek-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=core
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - eyebek-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # .NET Backend API
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: eyebek-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - MongoDB__ConnectionString=mongodb://mongodb:27017
+      - MongoDB__CoreDatabaseName=core
+      - Jwt__Key=CAMBIA_ESTA_LLAVE_LARGA_Y_SEGURA_PARA_PRODUCCION
+      - Jwt__Issuer=Eyebek
+      - Jwt__Audience=Eyebek
+      - FacialAPI__BaseUrl=http://facialapi:8000
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - eyebek-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Python Facial Recognition API
+  facialapi:
+    build:
+      context: ./FacialAPI
+      dockerfile: Dockerfile
+    container_name: eyebek-facialapi
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - eyebek-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Next.js Frontend
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: eyebek-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:5000
+    depends_on:
+      - backend
+    networks:
+      - eyebek-network
+
+networks:
+  eyebek-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+    driver: local
