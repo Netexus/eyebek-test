@@ -1,0 +1,179 @@
+.footer {
+  background-color: #ffffff;
+  border-top: 1px solid #f1f1f1;
+  padding-top: 4rem;
+  padding-bottom: 2rem;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+
+.topSection {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2.5rem;
+  margin-bottom: 4rem;
+}
+
+.brandName {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #000000;
+  margin-bottom: 1rem;
+  letter-spacing: -0.03em;
+}
+
+.brandDescription {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: #555555;
+  max-width: 260px;
+}
+
+.columnTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.linkList, .contactList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.link {
+  text-decoration: none;
+  color: #555555;
+  font-size: 0.9375rem;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: #000000;
+}
+
+.contactItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.9375rem;
+  color: #555555;
+  line-height: 1.5;
+}
+
+.contactIcon {
+  font-size: 1.25rem;
+  color: #000000;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+
+.bottomBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 2rem;
+  border-top: 1px solid #f1f1f1;
+}
+
+.copyright {
+  font-size: 0.875rem;
+  color: #888888;
+}
+
+.socialsAndLegal {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.socialIcons {
+  display: flex;
+  gap: 1rem;
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+  color: #333333;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.socialLink:hover {
+  background-color: #000000;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.legalLinks {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.legalLink {
+  font-size: 0.875rem;
+  color: #666666;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.legalLink:hover {
+  color: #000000;
+  text-decoration: underline;
+}
+
+@media (max-width: 1024px) {
+  .topSection {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .topSection {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .bottomBar {
+    flex-direction: column-reverse;
+    gap: 2rem;
+    align-items: flex-start;
+  }
+
+  .socialsAndLegal {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+    width: 100%;
+  }
+
+  .socialIcons {
+    width: 100%;
+  }
+  
+  .legalLinks {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
