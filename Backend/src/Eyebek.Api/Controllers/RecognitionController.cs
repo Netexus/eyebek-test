@@ -28,13 +28,13 @@ public class RecognitionController : ControllerBase
     public async Task<IActionResult> InitiateRecognition([FromBody] InitiateRecognitionRequest request)
     {
         var companyId = HttpContext.GetCompanyId();
-        var role = HttpContext.GetRole();
+        // var role = HttpContext.GetRole(); // Commented out - extension method not available
         
         if (companyId == null)
             return Unauthorized("No se encontró la empresa en el token.");
 
-        _logger.LogInformation("🎭 Recognition init: User={UserId}, Company={CompanyId}, Role={Role}", 
-            request.UserId, companyId, role);
+        _logger.LogInformation("🎭 Recognition init: User={UserId}, Company={CompanyId}", 
+            request.UserId, companyId);
 
         var result = await _recognitionService.InitiateRecognitionAsync(companyId, request.UserId);
 
