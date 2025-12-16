@@ -13,4 +13,13 @@ public static class HttpContextExtensions
 
         return claim.Value;
     }
+    
+    public static string? GetRole(this HttpContext context)
+    {
+        var claim = context.User.FindFirst(ClaimTypes.Role);
+        if (claim == null)
+            return null;
+
+        return claim.Value;
+    }
 }

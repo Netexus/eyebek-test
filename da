@@ -1,0 +1,17 @@
+[33mcommit de0433f3743111910512a51335b8308b9917cb39[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mAll_Together[m[33m, [m[1;31morigin/All_Together[m[33m)[m
+Author: Luis Martínez <lufemarc@gmail.com>
+Date:   Tue Dec 16 02:13:53 2025 -0500
+
+    feat: Enhance Facial API functionality and improve MongoDB multitenancy support in Next.js application.
+
+[33mcommit 3302682e540abcb6eb4f128fb733221d8fcefc11[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m)[m
+Author: Luis Martínez <lufemarc@gmail.com>
+Date:   Mon Dec 15 17:03:17 2025 -0500
+
+    feat: Implement initial Facial API, multitenant MongoDB backend, and Next.js frontend with Docker orchestration.
+
+[33mcommit 0254dfd9334c67ea3de16d62be6f96c6932ffe9d[m
+Author: Luis Martínez <lufemarc@gmail.com>
+Date:   Mon Dec 15 15:28:57 2025 -0500
+
+    feat: Implement initial core architecture including Dockerization, multitenant MongoDB setup, and Facial Recognition API.
