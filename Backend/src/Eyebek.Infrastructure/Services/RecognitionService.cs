@@ -178,7 +178,7 @@ public class RecognitionService : IRecognitionService
         }
 
         // Validate confidence threshold
-        var minimumConfidence = _configuration.GetValue<double>("Recognition:MinimumConfidence", 0.5);
+        var minimumConfidence = double.TryParse(_configuration["Recognition:MinimumConfidence"], out var conf) ? conf : 0.5;
         if (confidence < minimumConfidence)
         {
             string userIdStr = session.UserId;
