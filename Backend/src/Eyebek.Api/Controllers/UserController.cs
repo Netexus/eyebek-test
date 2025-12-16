@@ -43,16 +43,7 @@ public class UsersController : ControllerBase
         if (companyId == null)
             return Unauthorized("No se encontró la empresa en el token.");
 
-        
-        await Task.CompletedTask;
-
-        var emptyList = new List<object>();
-
-        return Ok(new
-        {
-            message = "Listado de usuarios (implementación de servicio pendiente).",
-            companyId = companyId,
-            users = emptyList
-        });
+        var users = await _userService.GetByCompanyAsync(companyId);
+        return Ok(users);
     }
 }

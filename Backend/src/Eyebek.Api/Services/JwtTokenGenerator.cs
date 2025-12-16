@@ -20,13 +20,17 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 
     public string GenerateCompanyToken(Company company)
     {
+        // Determine role based on email
+        var role = company.Email == "superadmin@eyebek.com" ? "SUPER_ADMIN" : "COMPANY";
+        
         var claims = new List<Claim>
         {
             new("companyId", company.Id.ToString()),
             new(JwtRegisteredClaimNames.Sub, company.Email ?? string.Empty),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(JwtRegisteredClaimNames.Email, company.Email ?? string.Empty),
-            new("companyName", company.Name ?? string.Empty)
+            new("companyName", company.Name ?? string.Empty),
+            new("role", role)
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Key));
