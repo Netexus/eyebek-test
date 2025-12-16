@@ -1,4 +1,5 @@
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Eyebek.Application.Services.Interfaces;
 using Microsoft.Extensions.Configuration;

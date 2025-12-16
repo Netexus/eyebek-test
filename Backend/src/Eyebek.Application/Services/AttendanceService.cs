@@ -37,18 +37,19 @@ public class AttendanceService : IAttendanceService
             CreatedAt = DateTime.UtcNow
         };
 
-        // If facial method, validate with FacialAPI
         if (request.Method == AttendanceMethod.Facial && !string.IsNullOrEmpty(request.CapturePhoto))
         {
-            var user = await _userRepository.GetByIdAsync(request.UserId, companyId);
+            // Fix 1: GetByIdAsync only takes 1 argument
+            var user = await _userRepository.GetByIdAsync(request.UserId);
             if (user != null && !string.IsNullOrEmpty(user.Photo))
             {
-                var (match, confidence) = await _facialRecognitionService.CompareFacesAsync(
+                // Fix 2: Explicit deconstruction to avoid inference errors
+                (bool match, double confidence) = await _facialRecognitionService.CompareFacesAsync(
                     user.Photo, 
                     request.CapturePhoto
                 );
 
-                attendance.Confidence = confidence;
+                attendance.Confidence = (decimal)confidence;
                 
                 // Auto-approve if confidence is high enough (>= 85%)
                 if (match && confidence >= 0.85)

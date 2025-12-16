@@ -2,8 +2,7 @@ namespace Eyebek.Domain.Enums;
 
 public enum AttendanceStatus
 {
-    Present,
-    Late,
-    Absent,
-    Excused
+    Approved = 0,
+    Pending = 1,
+    Rejected = 2
 }
