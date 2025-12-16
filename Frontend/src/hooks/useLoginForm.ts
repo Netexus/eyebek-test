@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import authService from '@/services/authService';
 import { LoginFormData, LoginFormErrors, UseLoginFormReturn } from '@/types/auth.types';
+import { decodeJwt, getJwtRole } from '@/utils/jwt';
 
 export const useLoginForm = (): UseLoginFormReturn => {
   const router = useRouter();
@@ -15,7 +16,7 @@ export const useLoginForm = (): UseLoginFormReturn => {
   const [isLoading, setIsLoading] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false); 
 
-  
+  // Validación de email
   const validateEmail = (email: string): string | undefined => {
     if (!email) {
       return 'El email es requerido';
@@ -42,7 +43,7 @@ export const useLoginForm = (): UseLoginFormReturn => {
     return undefined;
   };
 
-  
+  // Validación del formulario
   const validateForm = (): boolean => {
     const newErrors: LoginFormErrors = {};
     
@@ -56,7 +57,7 @@ export const useLoginForm = (): UseLoginFormReturn => {
     return Object.keys(newErrors).length === 0;
   };
 
-  
+  // Manejo de cambios en el formulario
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     
@@ -65,7 +66,7 @@ export const useLoginForm = (): UseLoginFormReturn => {
       [name]: value,
     }));
 
-    
+    // Validación en tiempo real
     if (name === 'email') {
       const error = validateEmail(value);
       setErrors(prev => ({
@@ -83,7 +84,7 @@ export const useLoginForm = (): UseLoginFormReturn => {
     }
   };
 
-  
+  // Limpieza de errores
   const clearError = (field: keyof LoginFormErrors) => {
     setErrors(prev => ({
       ...prev,
@@ -91,14 +92,35 @@ export const useLoginForm = (): UseLoginFormReturn => {
     }));
   };
 
-  
+  const getRedirectPath = useCallback((token: string): string => {
+    try {
+      const decoded = decodeJwt(token);
+      const role = getJwtRole(decoded);
+      console.log('Decoded JWT:', decoded);
+      console.log('User role:', role);
+      
+      // Map roles to their corresponding dashboard paths
+      const rolePathMap: Record<string, string> = {
+        'SuperAdmin': '/dashboard',
+        'Company': '/dashboard_company',
+        'Admin': '/dashboard_company',
+        'Employee': '/dashboard_company'
+      };
+
+      // Default to /dashboard_company if role not found
+      return rolePathMap[role] || '/dashboard_company';
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return '/dashboard_company'; // Default fallback
+    }
+  }, []);
+
+  // Manejo de envío del formulario
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    
     setErrors(prev => ({ ...prev, general: undefined }));
     setLoginSuccess(false); 
-    
     
     if (!validateForm()) {
       return;
@@ -107,7 +129,6 @@ export const useLoginForm = (): UseLoginFormReturn => {
     setIsLoading(true);
 
     try {
-      
       const response = await authService.login({
         email: formData.email,
         password: formData.password,
@@ -117,14 +138,21 @@ export const useLoginForm = (): UseLoginFormReturn => {
       console.log('Token guardado:', authService.getToken());
       console.log('Empresa:', authService.getCompany());
 
+      const token = authService.getToken();
+      if (!token) {
+        throw new Error('No se pudo obtener el token de autenticación');
+      }
+
+      const redirectPath = getRedirectPath(token);
+      console.log('Redirecting to:', redirectPath);
       
       setLoginSuccess(true);
       
-     
+      // Small delay to show success message before redirect
       setTimeout(() => {
-        router.push('/dashboard');
+        router.push(redirectPath);
         router.refresh();
-      }, 2000);
+      }, 1000);
       
     } catch (error: any) {
       console.error('Error en login:', error);

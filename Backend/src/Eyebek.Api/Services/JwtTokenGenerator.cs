@@ -4,6 +4,7 @@ using System.Text;
 using Eyebek.Application.Services;
 using Eyebek.Application.Services.Interfaces;
 using Eyebek.Domain.Entities;
+using Eyebek.Domain.Enums;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -26,7 +27,8 @@ public class JwtTokenGenerator : IJwtTokenGenerator
             new(JwtRegisteredClaimNames.Sub, company.Email ?? string.Empty),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(JwtRegisteredClaimNames.Email, company.Email ?? string.Empty),
-            new("companyName", company.Name ?? string.Empty)
+            new("companyName", company.Name ?? string.Empty),
+            new(ClaimTypes.Role, UserRole.Company.ToString())
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Key));
